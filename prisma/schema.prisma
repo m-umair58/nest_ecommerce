@@ -28,3 +28,22 @@ model User {
   email     String   @unique
   hash      String
 }
+
+model Billing{
+  id        Int      @id @default(autoincrement())
+  name      String
+  email String
+  address String
+  city String
+  postalCode Int
+  orderId Int
+  timeOrderPlaceAt DateTime @default(now())
+}
+
+model Order{
+  id Int @id @default(autoincrement())
+  userId Int
+  productId Int[]
+  productQuantity Int[]
+  status String
+}

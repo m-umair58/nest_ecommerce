@@ -12,6 +12,7 @@ export class UserController {
     constructor(private userService:UserService){}
     @Get('me')
     getme(@GetUser() user:User ){
+        console.log(user);
         return user;
     }
 

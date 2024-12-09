@@ -95,10 +95,10 @@ export class AuthService {
           email,
         };
         const token =  await this.jwt.signAsync(payload, {
-          expiresIn: '15m',
+          expiresIn: '150m',
           secret: this.config.get('JWT_SECRET'),
         });
-        console.log(token)
+        // console.log(token)
         return {
           data:{
             statusCode:201,

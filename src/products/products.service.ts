@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { productsDto } from './dto';
+import { productDto, productsDto } from './dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { NotFoundError } from 'rxjs';
 
@@ -21,6 +21,15 @@ export class ProductsService {
                 throw new ForbiddenException('there is an error');
               }
         }
+    }
+
+    async getProductById(id:number){
+      const product = await this.prisma.products.findFirst({
+        where:{
+          id
+        }
+      })
+      return product;
     }
 
     async createProduct(dto:productsDto){

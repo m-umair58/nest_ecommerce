@@ -21,3 +21,8 @@ export class productsDto{
     @IsNotEmpty()
     price:number
 }
+
+export class productDto{
+    @IsNumber()
+    productId:number
+}
