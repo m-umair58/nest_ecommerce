@@ -7,6 +7,7 @@ async function bootstrap() {
 
   const allowedOrigins = [
     'http://localhost:3000',
+    'https://react-ecommerce-six-coral.vercel.app/'
   ];
 
   app.use(
