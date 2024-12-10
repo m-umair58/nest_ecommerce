@@ -7,7 +7,8 @@ async function bootstrap() {
 
   const allowedOrigins = [
     'http://localhost:3000',
-    'https://react-ecommerce-six-coral.vercel.app'
+    'https://react-ecommerce-six-coral.vercel.app',
+    'https://react-ecommerce-oa88vxzno-m-umair58s-projects.vercel.app'
   ];
 
   app.use(
@@ -23,5 +24,7 @@ async function bootstrap() {
   );
 
   await app.listen(process.env.PORT ?? 3000);
+  console.log(`Memory usage: ${process.memoryUsage().heapUsed / 1024 / 1024} MB`);
+
 }
-bootstrap();
+bootstrap(); 
