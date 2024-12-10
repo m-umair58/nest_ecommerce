@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { productDto, productsDto } from './dto';
+import { productsDto } from './dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { NotFoundError } from 'rxjs';
 
@@ -10,7 +10,7 @@ export class ProductsService {
 
     async getAllProducts(){
         try{
-            const products = await this.prisma.products.findMany();
+            const products = await this.prisma.product.findMany();
             if(!products){
                 throw new NotFoundException("Products Data Not found...!");
             }
@@ -24,7 +24,7 @@ export class ProductsService {
     }
 
     async getProductById(id:number){
-      const product = await this.prisma.products.findFirst({
+      const product = await this.prisma.product.findFirst({
         where:{
           id
         }
@@ -32,46 +32,82 @@ export class ProductsService {
       return product;
     }
 
-    async createProduct(dto:productsDto){
-        try{
-            const product = await this.prisma.products.create({
-                data:{
-                    name:dto.name,
-                    description:dto.description,
-                    image:dto.image,
-                    price:dto.price,
-                    category:dto.category
-                }
-            })
-            return product;
-        }catch(e){
-            if (e instanceof PrismaClientKnownRequestError) {
-                console.log('Forbidden exception caught:', e.message); 
-                throw new ForbiddenException('there is an error');
+    async createProduct(dto: productsDto) {
+      try {
+        const product = await this.prisma.product.create({
+          data: {
+            name: dto.name,
+            description: dto.description,
+            image: dto.image,
+            price: dto.price,
+            category: dto.category,
+            manufacturer: dto.manufacturer,  // Add manufacturer
+            availability: dto.availability,  // Add availability
+            specifications: dto.specifications ? {
+              create: {
+                weight: dto.specifications.weight,
+                battery_life: dto.specifications.battery_life,
+                bluetooth: dto.specifications.bluetooth,
+                noise_cancellation: dto.specifications.noise_cancellation,
               }
-        }
-    }
-    
-    async createManyProducts(dtos: productsDto[]) {
-        try {
-          const products = await this.prisma.products.createMany({
-            data: dtos.map(dto => ({
-              name: dto.name,
-              description: dto.description,
-              image: dto.image,
-              price: dto.price,
-              category: dto.category,
-            })),
-          });
-          return {
-            count: products.count,
-            message: `${products.count} products added successfully.`,
-          };
-        } catch (e) {
-          if (e instanceof PrismaClientKnownRequestError) {
-            console.log('Forbidden exception caught:', e.message);
-            throw new ForbiddenException('There was an error adding products');
-          }
+            } : undefined, // optional, only create if specifications are provided
+            reviews: dto.reviews ? {
+              create: dto.reviews.map(review => ({
+                user: review.user,
+                rating: review.rating,
+                comment: review.comment,
+              }))
+            } : undefined, // optional, only create if reviews are provided
+          },
+        });
+        return product;
+      } catch (e) {
+        if (e instanceof PrismaClientKnownRequestError) {
+          console.log('Forbidden exception caught:', e.message);
+          throw new ForbiddenException('There is an error while creating the product.');
         }
       }
+    }
+    
+    
+    async createManyProducts(dtos: productsDto[]) {
+      try {
+        const products = await this.prisma.product.createMany({
+          data: dtos.map(dto => ({
+            name: dto.name,
+            description: dto.description,
+            image: dto.image,
+            price: dto.price,
+            category: dto.category,
+            manufacturer: dto.manufacturer,  // Add manufacturer
+            availability: dto.availability, 
+            specifications: dto.specifications ? {
+              create: {
+                weight: dto.specifications.weight,
+                battery_life: dto.specifications.battery_life,
+                bluetooth: dto.specifications.bluetooth,
+                noise_cancellation: dto.specifications.noise_cancellation,
+              }
+            } : undefined,
+            reviews: dto.reviews ? {
+              create: dto.reviews.map(review => ({
+                user: review.user,
+                rating: review.rating,
+                comment: review.comment,
+              }))
+            } : undefined,
+          })),
+        });
+        return {
+          count: products.count,
+          message: `${products.count} products added successfully.`,
+        };
+      } catch (e) {
+        if (e instanceof PrismaClientKnownRequestError) {
+          console.log('Forbidden exception caught:', e.message);
+          throw new ForbiddenException('There was an error adding products.');
+        }
+      }
+    }
+    
 }

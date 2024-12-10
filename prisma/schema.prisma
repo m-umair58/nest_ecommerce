@@ -13,14 +13,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Products {
-  id          Int      @id @default(autoincrement())
-  name        String   
-  description String
-  image       String
-  category    String
-  price       Int
+model Product {
+  id            Int            @id @default(autoincrement())
+  name          String
+  description   String
+  image         String
+  category      String
+  price         Int
+  specifications Specifications? // No need for @relation here
+  reviews       Review[]
+  manufacturer  String
+  availability  String
 }
+
+model Specifications {
+  id               Int    @id @default(autoincrement())
+  productId        Int    @unique
+  weight           String
+  battery_life     String
+  bluetooth        String
+  noise_cancellation String
+  product          Product @relation(fields: [productId], references: [id]) // Only define @relation here
+}
+
+model Review {
+  id        Int    @id @default(autoincrement())
+  productId Int
+  user      String
+  rating    Int
+  comment   String
+  product   Product @relation(fields: [productId], references: [id])
+}
+
 
 model User {
   id        Int      @id @default(autoincrement())
