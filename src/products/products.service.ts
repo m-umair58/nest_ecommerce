@@ -62,6 +62,7 @@ export class ProductsService {
         });
         return product;
       } catch (e) {
+        console.log(e.message)
         if (e instanceof PrismaClientKnownRequestError) {
           console.log('Forbidden exception caught:', e.message);
           throw new ForbiddenException('There is an error while creating the product.');
@@ -103,6 +104,7 @@ export class ProductsService {
           message: `${products.count} products added successfully.`,
         };
       } catch (e) {
+        console.log(e.message);
         if (e instanceof PrismaClientKnownRequestError) {
           console.log('Forbidden exception caught:', e.message);
           throw new ForbiddenException('There was an error adding products.');
