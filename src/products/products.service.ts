@@ -41,34 +41,34 @@ export class ProductsService {
             image: dto.image,
             price: dto.price,
             category: dto.category,
-            manufacturer: dto.manufacturer,  // Add manufacturer
-            availability: dto.availability,  // Add availability
+            manufacturer: dto.manufacturer, // Manufacturer field
+            availability: dto.availability, // Availability field
             specifications: dto.specifications ? {
-              create: {
-                weight: dto.specifications.weight,
-                battery_life: dto.specifications.battery_life,
-                bluetooth: dto.specifications.bluetooth,
-                noise_cancellation: dto.specifications.noise_cancellation,
-              }
-            } : undefined, // optional, only create if specifications are provided
+              create: dto.specifications.map(spec => ({
+                key: spec.key,
+                value: spec.value,
+              })),
+            } : undefined, // Create specifications only if provided
             reviews: dto.reviews ? {
               create: dto.reviews.map(review => ({
                 user: review.user,
                 rating: review.rating,
                 comment: review.comment,
-              }))
-            } : undefined, // optional, only create if reviews are provided
+              })),
+            } : undefined, // Create reviews only if provided
           },
         });
         return product;
       } catch (e) {
-        console.log(e.message)
+        console.log(e.message);
         if (e instanceof PrismaClientKnownRequestError) {
-          console.log('Forbidden exception caught:', e.message);
-          throw new ForbiddenException('There is an error while creating the product.');
+          console.log('Prisma exception caught:', e.message);
+          throw new ForbiddenException('Error while creating the product.');
         }
+        throw new Error('An unexpected error occurred while creating the product.');
       }
     }
+    
     
     
     async createManyProducts(dtos: productsDto[]) {
@@ -83,12 +83,10 @@ export class ProductsService {
             manufacturer: dto.manufacturer,  // Add manufacturer
             availability: dto.availability, 
             specifications: dto.specifications ? {
-              create: {
-                weight: dto.specifications.weight,
-                battery_life: dto.specifications.battery_life,
-                bluetooth: dto.specifications.bluetooth,
-                noise_cancellation: dto.specifications.noise_cancellation,
-              }
+              create: dto.specifications.map(spec => ({
+                key: spec.key,
+                value: spec.value,
+              })),
             } : undefined,
             reviews: dto.reviews ? {
               create: dto.reviews.map(review => ({

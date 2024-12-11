@@ -30,7 +30,7 @@ export class productsDto {
   availability:string
 
   @IsOptional()
-  specifications?: SpecificationsDto;
+  specifications?: SpecificationsDto[];
 
   @IsArray()
   @IsOptional()

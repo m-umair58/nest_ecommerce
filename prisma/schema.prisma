@@ -20,20 +20,18 @@ model Product {
   image         String
   category      String
   price         Int
-  specifications Specifications? // No need for @relation here
+  specifications Specification[] // No need for @relation here
   reviews       Review[]
   manufacturer  String
   availability  String
 }
 
-model Specifications {
-  id               Int    @id @default(autoincrement())
-  productId        Int    @unique
-  weight           String
-  battery_life     String
-  bluetooth        String
-  noise_cancellation String
-  product          Product @relation(fields: [productId], references: [id]) // Only define @relation here
+model Specification {
+  id        Int    @id @default(autoincrement())
+  productId Int
+  key       String // Name of the specification (e.g., "weight", "battery life")
+  value     String // Value of the specification (e.g., "2.3 lbs", "20 hours")
+  product   Product @relation(fields: [productId], references: [id])
 }
 
 model Review {

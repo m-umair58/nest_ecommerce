@@ -2,14 +2,8 @@ import { IsString } from 'class-validator';
 
 export class SpecificationsDto {
   @IsString()
-  weight: string;
+  key: string; // The specification key, e.g., "weight", "battery_life", etc.
 
   @IsString()
-  battery_life: string;
-
-  @IsString()
-  bluetooth: string;
-
-  @IsString()
-  noise_cancellation: string;
+  value: string; // The value for the specification key, e.g., "2.3 lbs", "10 hours", etc.
 }
