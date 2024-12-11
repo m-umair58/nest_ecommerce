@@ -82,7 +82,7 @@ export class ProductsService {
             category: dto.category,
             manufacturer: dto.manufacturer,  // Add manufacturer
             availability: dto.availability, 
-            specifications: dto.specifications ? {
+            specification: dto.specifications ? {
               create: dto.specifications.map(spec => ({
                 key: spec.key,
                 value: spec.value,
