@@ -8,20 +8,29 @@ import { NotFoundError } from 'rxjs';
 export class ProductsService {
     constructor(private prisma:PrismaService){}
 
-    async getAllProducts(){
-        try{
-            const products = await this.prisma.product.findMany();
-            if(!products){
-                throw new NotFoundException("Products Data Not found...!");
-            }
-            return products;
-        }catch(e){
-            if (e instanceof PrismaClientKnownRequestError) {
-                console.log('Forbidden exception caught:', e.message); 
-                throw new ForbiddenException('there is an error');
-              }
+    async getAllProducts() {
+      try {
+        const products = await this.prisma.product.findMany({
+          include: {
+            specifications: true, // Include related specifications
+            reviews: true,        // Include related reviews
+          },
+        });
+    
+        if (!products || products.length === 0) {
+          throw new NotFoundException("Products Data Not found...!");
         }
+    
+        return products;
+      } catch (e) {
+        if (e instanceof PrismaClientKnownRequestError) {
+          console.log('Forbidden exception caught:', e.message); 
+          throw new ForbiddenException('There is an error fetching products.');
+        }
+        throw e;  // Re-throw the error if it's not a known Prisma error
+      }
     }
+    
 
     async getProductById(id:number){
       const product = await this.prisma.product.findFirst({
